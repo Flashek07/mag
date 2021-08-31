@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  form(method="get" action="/")
+    button(class='button' style={color: 'LightCyan', background: 'gray'}) ← Home
+  h1= title
+  p Welcome to #{title}
+  p #{message} #{user}
+
+  form(method="post" action="/add_user" name="adduser")
+    button(type="submit" style={color: 'GreenYellow', background: 'gray'}) Add User
+    input(type='text', name="username", value='' required)
+  p
+  form(method="post" action="/del_user" name="deluser")
+    button(type="submit" style={color: 'LightCoral', background: 'gray'}) Delete User
+    label(for="userslist")
+     select(name="userslist" value='' required).form-control
+      each val in json
+        option(value=val) User #{JSON.stringify((val.name)).slice(1, -1)}
+
+
+
+
+
+

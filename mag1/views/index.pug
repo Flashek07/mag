@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  br
+  h1= title
+  p Welcome to #{title}
+  form(method="get" action="/event")
+    button(type="submit" style={color: 'gold', background: 'gray'}) Manage Events
+  p
+  form(method="get" action="/users")
+    button(type="submit" style={color: 'GreenYellow', background: 'gray'}) Manage Users
+  p
+  form(method="get" action="/archive")
+    button(type="submit" style={color: 'Plum', background: 'gray'}) View arvchived events

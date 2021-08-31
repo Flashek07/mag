@@ -1,0 +1,27 @@
+connection.connect(function (err, result) {
+    if (err.code == 'ER_BAD_DB_ERROR') {
+       console.log("brak bazy");
+    } else if (err) {
+       console.log('Error!', err.message, 'Error code:', err.code);
+    } else {
+       console.log("Connected!");
+    }
+ });
+
+ select(name="userslist").form-control
+ for name in json
+   option(value=(id)) #{name}
+h2 #{json}
+
+for id in json
+option(value=(id)) #{name}
+
+let users_promise = new Promise((resolve, reject) => {
+   if(get_users(data_response)) {
+     resolve(list_users(), console.log("promise ok!"));
+   }
+   else {
+     reject(Error("promise bad!"));
+   }
+   console.log(user_array + 'test')
+ });

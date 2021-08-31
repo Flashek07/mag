@@ -1,0 +1,97 @@
+kto
+co
+dla kogo
+ean
+<zatwierdź>
+
+(lista zatwierdzonych)
+
+async
+
+var database = "CREATE DATABASE IF NOT EXISTS mag";
+  connection.query(database, function (err, result) {
+    if (err) throw err;
+    console.log("database created or exists!");
+  })
+
+  connection.end(console.log("Connection end!"))
+
+    
+    connection.query('INSERT INTO user (user)', user_data, function (err, results, fields) {
+      if (err) throw err;
+      res.send('Zarejestrowano uzytkownika');
+    });
+});
+
+// OD PATRYKA BEZ SQL INJECTION
+const mysql = require('mysql');
+const logger = require('../core/logger');
+const { config } = require('../config/mysql.conf')
+
+var conn = mysql.createConnection(config);
+
+conn.connect(function(err) {
+  if (err) {
+    logger.error('MySQL', 'Error connecting');
+    return;
+  }
+
+  logger.log('MySQL', 'Connected');
+});
+
+module.exports = {
+  async query(query, data) {
+    if(data) {
+      query = await new Promise((resolve) => {
+        Object.keys(data).forEach((key, idx, array) => {
+          query = query.split(`$[${key}]`).join(`'${data[key]}'`);
+          if (idx === array.length - 1){
+            resolve(query);
+          }
+        })
+      });
+      logger.debug('MySQL', query);
+      const result = await new Promise((resolve) => {
+        conn.query(query, (error, result) => {
+          if (error) {
+            resolve({ success: false, err: error });
+          }
+          else {
+            if(result.length) {
+              resolve({ success: true, result: result });
+            }
+            else if(result.insertId) {
+              resolve({ success: true, id: result.insertId });
+            }
+            else {
+              resolve({ success: false, error: 'no data' });
+            }
+          }
+        });
+      });
+      if(result && result.success) {
+        return result
+      }
+      else {
+        return { success: false }
+      }
+    }
+    else {
+      logger.debug('MySQL', query);
+      const result = await new Promise((resolve, reject) => {
+        conn.query(query, (error, result, fields) => {
+          if (error) resolve({ success: false });
+          else {
+            resolve({ success: true, result: result });
+          }
+        });
+      });
+      if(result && result.success) {
+        return { success: true, result: result.result };
+      }
+      else {
+        return { success: false }
+      }
+    }
+  }
+}
